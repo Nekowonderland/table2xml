@@ -33,13 +33,16 @@ $GLOBALS['TL_DCA']['tl_tabletoxml_export'] = array(
     // Config
     'config' => array(
         'dataContainer' => 'Table',
-        'enableVersioning' => true
+        'enableVersioning' => true,
+        'onload_callback' => array(
+            array('tl_tabletoxml_export', 'coreFunctions'),
+        )
     ),
     // List
     'list' => array(
         'sorting' => array(
             'mode' => 1,
-            'fields' => array('id', 'title'),
+            'fields' => array('tables'),
             'flag' => 2,
             'panelLayout' => 'filter;search,limit',
         ),
@@ -57,25 +60,30 @@ $GLOBALS['TL_DCA']['tl_tabletoxml_export'] = array(
         ),
         'operations' => array(
             'edit' => array(
-                'label' => &$GLOBALS['TL_LANG']['tl_syncCto_clients']['edit'],
+                'label' => &$GLOBALS['TL_LANG']['tl_tabletoxml_export']['edit'],
                 'href' => 'act=edit',
                 'icon' => 'edit.gif',
             ),
             'copy' => array(
-                'label' => &$GLOBALS['TL_LANG']['tl_syncCto_clients']['copy'],
+                'label' => &$GLOBALS['TL_LANG']['tl_tabletoxml_export']['copy'],
                 'href' => 'act=copy',
                 'icon' => 'copy.gif',
             ),
             'delete' => array(
-                'label' => &$GLOBALS['TL_LANG']['tl_syncCto_clients']['delete'],
+                'label' => &$GLOBALS['TL_LANG']['tl_tabletoxml_export']['delete'],
                 'href' => 'act=delete',
                 'icon' => 'delete.gif',
                 'attributes' => 'onclick="if (!confirm(\'' . $GLOBALS['TL_LANG']['MSC']['deleteConfirm'] . '\')) return false; Backend.getScrollOffset();"',
             ),
             'show' => array(
-                'label' => &$GLOBALS['TL_LANG']['tl_syncCto_clients']['show'],
+                'label' => &$GLOBALS['TL_LANG']['tl_tabletoxml_export']['show'],
                 'href' => 'act=show',
                 'icon' => 'show.gif',
+            ),
+            'create' => array(
+                'label' => &$GLOBALS['TL_LANG']['tl_tabletoxml_export']['createXML'],
+                'href' => 'act=createXML',
+                'icon' => 'system/modules/syncCto/html/iconSyncTo.png'
             ),
         )
     ),
@@ -126,11 +134,7 @@ $GLOBALS['TL_DCA']['tl_tabletoxml_export'] = array(
                     'mapping' => array(
                         'label' => &$GLOBALS['TL_LANG']['tl_tabletoxml_export']['mapping'],
                         'inputType' => 'text'
-                    ),
-                    'unserialize' => array(
-                        'label' => &$GLOBALS['TL_LANG']['tl_tabletoxml_export']['unserialize'],
-                        'inputType' => 'checkbox'
-                    ),
+                    )
                 ),
             )
         ),
@@ -162,6 +166,7 @@ $GLOBALS['TL_DCA']['tl_tabletoxml_export'] = array(
             'inputType' => 'text',
             'search' => true,
             'exclude' => true,
+            'eval' => array('tl_class' => 'long')
         ),
         'xmlSavePath' => array(
             'label' => &$GLOBALS['TL_LANG']['tl_tabletoxml_export']['xmlSavePath'],
@@ -175,6 +180,32 @@ $GLOBALS['TL_DCA']['tl_tabletoxml_export'] = array(
 
 class tl_tabletoxml_export extends Backend
 {
+
+    protected $objTable2XMLHelper;
+
+    public function __construct()
+    {
+        // Objects
+        $this->objTable2XMLHelper = new Table2XmlHelper();
+
+        // Parent Call
+        parent::__construct();
+    }
+
+    public function coreFunctions()
+    {
+        switch ($this->Input->get("act"))
+        {
+            case "createXML":
+                $this->objTable2XMLHelper->createXML($this->Input->get("id"));
+                $this->redirect("contao/main.php?do=tl_tabletoxml_export");
+                break;
+
+            default:
+                return;
+                break;
+        }
+    }
 
     public function getAllTables(DC_Table $table)
     {
@@ -213,19 +244,20 @@ class tl_tabletoxml_export extends Backend
             return $arrReturn;
         }
 
+        // Get table fields
         $arrFields = $this->Database->getFieldNames($arrCurrentRow[0]['tables']);
 
-        foreach ($arrFields as $value)
+        foreach ($arrFields as $valueFields)
         {
-            if ($value == "PRIMARY")
+            if ($valueFields == "PRIMARY")
             {
                 continue;
             }
 
-            $arrReturn[$value] = $value;
+            $arrReturn["table"][$valueFields] = $valueFields;
         }
 
-        return array_unique($arrReturn);
+        return $arrReturn;
     }
 
 }
