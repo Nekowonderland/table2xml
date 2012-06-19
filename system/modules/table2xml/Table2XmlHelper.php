@@ -86,18 +86,49 @@ class Table2XmlHelper extends Backend
         $arrData = $this->Database
                 ->prepare("SELECT * FROM $this->strTable")
                 ->execute();
-
-        while ($arrData->next())
+        
+        if ($arrExportRow[0]['exportMode'] == true)
         {
-            // Reset values
-            $arrFieldData = array();
-
-            // Load field values
-            foreach ($arrFieldMapping as $valueField)
+            while ($arrData->next())
             {
-                $arrFieldData[$valueField['mapping']] = $arrData->$valueField['fieldname'];
-            }
+                // Reset values
+                $arrFieldData = array();
 
+                // Load field values
+                foreach ($arrFieldMapping as $valueField)
+                {
+                    $arrFieldData[$valueField['mapping']] = $arrData->$valueField['fieldname'];
+                }
+
+                // Set time
+                $strTime = time();
+
+                // Replace insert tgas
+                $strContext = $this->xmlReplaceInsertTags($strTime, $arrFieldData, $strXMLTemplate);
+                $strFilename = $this->xmlReplaceInsertTags($strTime, $arrFieldData, $strSaveFileName);
+
+                // Write Data
+                $objFile = new File($strSaveFolder . "/" . $strFilename);
+                $objFile->write($strContext);
+                $objFile->close();
+            }
+        }
+        else
+        {
+            $arrFieldData = array();
+            $i = 0;
+            
+            while ($arrData->next())
+            {
+                // Load field values
+                foreach ($arrFieldMapping as $valueField)
+                {
+                    $arrFieldData[$i][$valueField['mapping']] = $arrData->$valueField['fieldname'];
+                }
+                
+                $i++;
+            }
+            
             // Set time
             $strTime = time();
 
@@ -186,6 +217,17 @@ class Table2XmlHelper extends Backend
                             $arrForeachValue = deserialize($arrFieldData[$elements[2]]);
                             $arrCache[$strTag] = $this->parseForeach($arrForeachTags, $arrForeachValue);
 
+                            break;
+
+                        case "row":
+                            $stringPartXML = "";
+                            
+                            foreach ($arrFieldData as $key => $value)
+                            {
+                                $stringPartXML .= $this->parseXML($arrForeachTags, $intTime, $value);
+                            }
+                            
+                            $arrCache[$strTag] = $stringPartXML;
                             break;
                     }
                     break;
