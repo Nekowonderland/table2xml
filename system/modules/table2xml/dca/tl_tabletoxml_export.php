@@ -108,7 +108,8 @@ $GLOBALS['TL_DCA']['tl_tabletoxml_export'] = array(
             'label' => &$GLOBALS['TL_LANG']['tl_tabletoxml_export']['description'],
             'inputType' => 'textarea',
             'search' => true,
-            'exclude' => true
+            'exclude' => true,
+            'eval' =>array('rte' => 'tinyMCE'),
         ),
         // Table
         'tables' => array(
@@ -207,7 +208,7 @@ class tl_tabletoxml_export extends Backend
         }
     }
 
-    public function getAllTables(DC_Table $table)
+    public function getAllTables($table)
     {
         $arrTables = $this->Database->listTables();
         $arrReturn = array();
