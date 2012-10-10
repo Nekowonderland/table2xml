@@ -32,65 +32,65 @@ if (!defined('TL_ROOT'))
 $GLOBALS['TL_DCA']['tl_tabletoxml_export'] = array(
     // Config
     'config' => array(
-        'dataContainer' => 'Table',
+        'dataContainer'    => 'Table',
         'enableVersioning' => true,
-        'onload_callback' => array(
+        'onload_callback'  => array(
             array('tl_tabletoxml_export', 'coreFunctions'),
         )
     ),
     // List
     'list' => array(
         'sorting' => array(
-            'mode' => 1,
-            'fields' => array('tables'),
-            'flag' => 2,
-            'panelLayout' => 'filter;search,limit',
+            'mode'   => 2,
+            'fields' => array('tables', 'title'),
+            'flag'        => 3,
+            'panelLayout' => 'filter;search,sort,limit',
         ),
-        'label' => array(
+        'label'       => array(
             'fields' => array('title'),
-            'format' => '%s ',
+            'format'            => '%s ',
         ),
         'global_operations' => array(
             'all' => array(
-                'label' => &$GLOBALS['TL_LANG']['tl_syncCto_clients']['all'],
-                'href' => 'act=select',
-                'class' => 'header_edit_all',
+                'label'      => &$GLOBALS['TL_LANG']['tl_syncCto_clients']['all'],
+                'href'       => 'act=select',
+                'class'      => 'header_edit_all',
                 'attributes' => 'onclick="Backend.getScrollOffset();"'
             )
         ),
         'operations' => array(
             'edit' => array(
                 'label' => &$GLOBALS['TL_LANG']['tl_tabletoxml_export']['edit'],
-                'href' => 'act=edit',
-                'icon' => 'edit.gif',
+                'href'  => 'act=edit',
+                'icon'  => 'edit.gif',
             ),
-            'copy' => array(
-                'label' => &$GLOBALS['TL_LANG']['tl_tabletoxml_export']['copy'],
-                'href' => 'act=copy',
-                'icon' => 'copy.gif',
+            'copy'  => array(
+                'label'  => &$GLOBALS['TL_LANG']['tl_tabletoxml_export']['copy'],
+                'href'   => 'act=copy',
+                'icon'   => 'copy.gif',
             ),
             'delete' => array(
-                'label' => &$GLOBALS['TL_LANG']['tl_tabletoxml_export']['delete'],
-                'href' => 'act=delete',
-                'icon' => 'delete.gif',
+                'label'      => &$GLOBALS['TL_LANG']['tl_tabletoxml_export']['delete'],
+                'href'       => 'act=delete',
+                'icon'       => 'delete.gif',
                 'attributes' => 'onclick="if (!confirm(\'' . $GLOBALS['TL_LANG']['MSC']['deleteConfirm'] . '\')) return false; Backend.getScrollOffset();"',
             ),
-            'show' => array(
-                'label' => &$GLOBALS['TL_LANG']['tl_tabletoxml_export']['show'],
-                'href' => 'act=show',
-                'icon' => 'show.gif',
+            'show'       => array(
+                'label'  => &$GLOBALS['TL_LANG']['tl_tabletoxml_export']['show'],
+                'href'   => 'act=show',
+                'icon'   => 'show.gif',
             ),
             'create' => array(
-                'label' => &$GLOBALS['TL_LANG']['tl_tabletoxml_export']['createXML'],
-                'href' => 'act=createXML',
-                'icon' => 'system/modules/syncCto/html/iconSyncTo.png'
+                'label'    => &$GLOBALS['TL_LANG']['tl_tabletoxml_export']['createXML'],
+                'href'     => 'act=createXML',
+                'icon'     => 'system/modules/syncCto/html/iconSyncTo.png'
             ),
         )
     ),
     // Palettes
     'palettes' => array(
         '__selector__' => array(),
-        'default' => '{title_legend},title,description;{table_legend},tables,fields;{expot_legend},exportMode,xmlTemplate;{save_legend},xmlSaveField,xmlSaveName,xmlSavePath;',
+        'default'     => '{title_legend},title,description;{table_legend},tables,fields;{expot_legend},exportMode,xmlTemplate;{save_legend},xmlSaveField,xmlSaveName,xmlSavePath;',
     ),
     'subpalettes' => array(
     ),
@@ -98,83 +98,91 @@ $GLOBALS['TL_DCA']['tl_tabletoxml_export'] = array(
     'fields' => array(
         // Title
         'title' => array(
-            'label' => &$GLOBALS['TL_LANG']['tl_tabletoxml_export']['title'],
+            'label'     => &$GLOBALS['TL_LANG']['tl_tabletoxml_export']['title'],
             'inputType' => 'text',
-            'search' => true,
-            'exclude' => true,
-            'eval' => array('mandatory' => true, 'maxlength' => '64', 'tl_class' => 'long')
+            'search'    => true,
+            'exclude'   => true,
+            'eval'      => array('mandatory'   => true, 'maxlength'   => '64', 'tl_class'    => 'long'),
+            'sorting'   => true,
+            'length'    => 2,
         ),
         'description' => array(
-            'label' => &$GLOBALS['TL_LANG']['tl_tabletoxml_export']['description'],
+            'label'     => &$GLOBALS['TL_LANG']['tl_tabletoxml_export']['description'],
             'inputType' => 'textarea',
-            'search' => true,
-            'exclude' => true,
-            'eval' =>array('rte' => 'tinyMCE'),
+            'search'    => true,
+            'exclude'   => true,
+//            'eval'      => array('rte'    => 'tinyMCE'),
         ),
         // Table
-        'tables' => array(
-            'label' => &$GLOBALS['TL_LANG']['tl_tabletoxml_export']['tables'],
-            'inputType' => 'select',
-            'search' => true,
-            'exclude' => true,
+        'tables'    => array(
+            'label'            => &$GLOBALS['TL_LANG']['tl_tabletoxml_export']['tables'],
+            'inputType'        => 'select',
+            'search'           => true,
+            'exclude'          => true,
             'options_callback' => array('tl_tabletoxml_export', 'getAllTables'),
-            'eval' => array('includeBlankOption' => true)
+            'eval' => array('includeBlankOption' => true, 'submitOnChange'     => true),
+            'sorting'   => true,
+            'length'    => 2,
         ),
-        'fields' => array(
-            'label' => &$GLOBALS['TL_LANG']['tl_tabletoxml_export']['fields'],
-            'exclude' => true,
+        'fields'             => array(
+            'label'     => &$GLOBALS['TL_LANG']['tl_tabletoxml_export']['fields'],
+            'exclude'   => true,
             'inputType' => 'multiColumnWizard',
-            'eval' => array(
+            'eval'      => array(
+                'dragAndDrop' => true,
                 'columnFields' => array(
                     'fieldname' => array(
-                        'label' => &$GLOBALS['TL_LANG']['tl_tabletoxml_export']['fieldname'],
-                        'inputType' => 'select',
+                        'label'            => &$GLOBALS['TL_LANG']['tl_tabletoxml_export']['fieldname'],
+                        'inputType'        => 'select',
                         'options_callback' => array('tl_tabletoxml_export', 'getAllFields'),
                         'eval' => array('includeBlankOption' => true)
                     ),
-                    'mapping' => array(
-                        'label' => &$GLOBALS['TL_LANG']['tl_tabletoxml_export']['mapping'],
-                        'inputType' => 'text'
+                    'mapping'            => array(
+                        'label'     => &$GLOBALS['TL_LANG']['tl_tabletoxml_export']['mapping'],
+                        'inputType' => 'text',
+                        'eval'      => array(
+                            'style'      => 'width:100px',
+                        )
                     )
                 ),
             )
         ),
         // Export 
         'exportMode' => array(
-            'label' => &$GLOBALS['TL_LANG']['tl_tabletoxml_export']['exportMode'],
-            'inputType' => 'checkbox',
-            'search' => true,
-            'exclude' => true
+            'label'       => &$GLOBALS['TL_LANG']['tl_tabletoxml_export']['exportMode'],
+            'inputType'   => 'checkbox',
+            'search'      => true,
+            'exclude'     => true
         ),
         'xmlTemplate' => array(
-            'label' => &$GLOBALS['TL_LANG']['tl_tabletoxml_export']['xmlTemplate'],
+            'label'     => &$GLOBALS['TL_LANG']['tl_tabletoxml_export']['xmlTemplate'],
             'inputType' => 'textarea',
-            'search' => true,
-            'exclude' => true,
-            'eval' => array('preserveTags' => true, 'decodeEntities' => false)
+            'search'    => true,
+            'exclude'   => true,
+            'eval'      => array('preserveTags'   => true, 'decodeEntities' => false)
         ),
         // Save
-        'xmlSaveField' => array(
-            'label' => &$GLOBALS['TL_LANG']['tl_tabletoxml_export']['xmlSaveField'],
-            'inputType' => 'select',
-            'search' => true,
-            'exclude' => true,
+        'xmlSaveField'   => array(
+            'label'            => &$GLOBALS['TL_LANG']['tl_tabletoxml_export']['xmlSaveField'],
+            'inputType'        => 'select',
+            'search'           => true,
+            'exclude'          => true,
             'options_callback' => array('tl_tabletoxml_export', 'getAllFields'),
             'eval' => array('includeBlankOption' => true)
         ),
-        'xmlSaveName' => array(
-            'label' => &$GLOBALS['TL_LANG']['tl_tabletoxml_export']['xmlSaveName'],
+        'xmlSaveName'        => array(
+            'label'     => &$GLOBALS['TL_LANG']['tl_tabletoxml_export']['xmlSaveName'],
             'inputType' => 'text',
-            'search' => true,
-            'exclude' => true,
-            'eval' => array('tl_class' => 'long')
+            'search'    => true,
+            'exclude'   => true,
+            'eval'      => array('tl_class'    => 'long')
         ),
         'xmlSavePath' => array(
-            'label' => &$GLOBALS['TL_LANG']['tl_tabletoxml_export']['xmlSavePath'],
+            'label'     => &$GLOBALS['TL_LANG']['tl_tabletoxml_export']['xmlSavePath'],
             'inputType' => 'fileTree',
-            'search' => true,
-            'exclude' => true,
-            'eval' => array('files' => false, 'fieldType' => 'radio')
+            'search'    => true,
+            'exclude'   => true,
+            'eval'      => array('files'     => false, 'fieldType' => 'radio')
         ),
     )
 );

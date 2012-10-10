@@ -35,7 +35,9 @@ if (!defined('TL_ROOT'))
 $GLOBALS['TL_LANG']['tl_tabletoxml_export']['title_legend'] = 'Beschreibung';
 $GLOBALS['TL_LANG']['tl_tabletoxml_export']['table_legend'] = 'Tabellen Auswahl';
 $GLOBALS['TL_LANG']['tl_tabletoxml_export']['expot_legend'] = 'Export Einstellungen';
-$GLOBALS['TL_LANG']['tl_tabletoxml_export']['save_legend'] = 'Speicher Einstellungen';
+$GLOBALS['TL_LANG']['tl_tabletoxml_export']['save_legend']  = 'Speicher Einstellungen';
+$GLOBALS['TL_LANG']['tl_tabletoxml_export']['new']          = array('Neuen Export erstellen', 'Neuen Export erstellen');
+$GLOBALS['TL_LANG']['tl_tabletoxml_export']['all']          = array('Neuen Export erstellen', 'Neuen Export erstellen');
 
 /**
  * Fields
@@ -56,6 +58,6 @@ $GLOBALS['TL_LANG']['tl_tabletoxml_export']['unserialize'] = array('Unserialize'
 /**
  * List
  */
-$GLOBALS['TL_LANG']['tl_tabletoxml_export']['step1'] = 'ZIP-Datei entpacken.';
+$GLOBALS['TL_LANG']['tl_tabletoxml_export']['step1']    = 'ZIP-Datei entpacken.';
 $GLOBALS['TL_LANG']['tl_tabletoxml_export']['complete'] = 'Das Backup %s wurde erfolgreich um %s am %s eingespielt.';
 ?>
