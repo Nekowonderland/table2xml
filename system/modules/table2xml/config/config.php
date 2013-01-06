@@ -34,6 +34,6 @@ if (!defined('TL_ROOT'))
  */
 $GLOBALS['BE_MOD']['table2xml']['tl_tabletoxml_export'] = array(
     'tables' => array('tl_tabletoxml_export'),
-    'icon' => 'system/modules/syncCto/html/icons/nav/iconSettings.png'
+    'icon' => 'system/modules/table2xml/html/icons/iconExport.png'
 );
 ?>

@@ -86,7 +86,7 @@ class Table2XmlHelper extends Backend
         $arrData = $this->Database
                 ->prepare("SELECT * FROM $this->strTable")
                 ->execute();
-        
+
         if ($arrExportRow[0]['exportMode'] == true)
         {
             while ($arrData->next())
@@ -117,7 +117,7 @@ class Table2XmlHelper extends Backend
         {
             $arrFieldData = array();
             $i = 0;
-            
+
             while ($arrData->next())
             {
                 // Load field values
@@ -125,10 +125,10 @@ class Table2XmlHelper extends Backend
                 {
                     $arrFieldData[$i][$valueField['mapping']] = $arrData->$valueField['fieldname'];
                 }
-                
+
                 $i++;
             }
-            
+
             // Set time
             $strTime = time();
 
@@ -221,12 +221,12 @@ class Table2XmlHelper extends Backend
 
                         case "row":
                             $stringPartXML = "";
-                            
+
                             foreach ($arrFieldData as $key => $value)
                             {
                                 $stringPartXML .= $this->parseXML($arrForeachTags, $intTime, $value);
                             }
-                            
+
                             $arrCache[$strTag] = $stringPartXML;
                             break;
                     }
@@ -241,15 +241,10 @@ class Table2XmlHelper extends Backend
 
     protected function parseForeach($arrTags, $arrData)
     {
-        if (!is_array($arrData))
-        {
-            return "";
-        }
-
         $strBuffer = "";
         $booFirstRun = true;
 
-        foreach ($arrData as $key => $value)
+        foreach ((array) $arrData as $key => $value)
         {
             for ($_rit = 0; $_rit < count($arrTags); $_rit = $_rit + 2)
             {
@@ -263,9 +258,8 @@ class Table2XmlHelper extends Backend
                 }
 
                 $elements = explode('::', $strTag);
-
                 $arrCache[$strTag] = '';
-
+                
                 switch ($elements[0])
                 {
                     case "field":
@@ -279,6 +273,34 @@ class Table2XmlHelper extends Backend
                                 $arrCache[$strTag] = $value;
                                 break;
                         }
+                        break;
+
+                    case "foreach":
+                        $intEndForeach = $this->searchEndForeach($arrTags, $_rit);
+                        $arrSubTags = $arrTags;
+                        $arrForeachTags = array_splice($arrSubTags, $_rit + 2, ($intEndForeach - ($_rit + 1)));
+                        $arrForeachTags = array_slice($arrForeachTags, 0, count($arrForeachTags) - 1);
+                                                
+                        switch ($elements[1])
+                        {
+                            case "unserialize":
+                                $arrCache[$strTag] = $this->parseForeach($arrForeachTags, deserialize($value));
+                                break;
+
+                            case "row":
+                                $stringPartXML = "";
+
+                                foreach ($value as $key => $value)
+                                {
+                                    $stringPartXML .= $this->parseXML($arrForeachTags, time(), $value);
+                                }
+
+                                $arrCache[$strTag] = $stringPartXML;
+                                break;
+                        }
+                        
+                        $_rit = $intEndForeach;
+
                         break;
 
                     default:
@@ -333,7 +355,7 @@ class Table2XmlHelper extends Backend
             }
         }
 
-        throw new Exception("Syntax error, missing endforeach.");
+        throw new Exception("Search for endtag - Syntax error, missing endforeach.");
     }
 
 }
